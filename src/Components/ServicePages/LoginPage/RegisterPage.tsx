@@ -1,12 +1,12 @@
 ﻿import React, {useState, ReactElement} from "react";
-import {UserData} from "../../Users/Models/UserModel";
-import {CreateApiClient} from "../../api/AxiosClient";
-import {UserService} from "../../Users/Services/UserService";
-import {dataStorage} from "../../Users/UserData/Providers/DataStorage";
-import App from "../../Bootstrapper/App";
-import {RegisterForm} from "./RegisterForm";
+import {UserData} from "../../../Users/Models/UserModel";
+import {CreateApiClient} from "../../../api/AxiosClient";
+import {UserService} from "../../../Users/Services/UserService";
+import {dataStorage} from "../../../Users/UserData/Providers/DataStorage";
+import {App} from "../../../Bootstrapper/App";
+import {LoginForm} from "./LoginForm";
 
-export function RegisterUserComponent(): ReactElement {
+export function RegisterPage(): ReactElement {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -33,5 +33,5 @@ export function RegisterUserComponent(): ReactElement {
         return <App/>;
     }
     
-    return RegisterForm(username, setUsername, password, setPassword, loading, handleSubmit);
+    return LoginForm(username, setUsername, password, setPassword, loading, handleSubmit);
 };

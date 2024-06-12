@@ -1,6 +1,6 @@
 import React, {ReactElement} from "react";
 
-export function RegisterForm
+export function LoginForm
 (
     username: string,
     setUsername: React.Dispatch<string>,

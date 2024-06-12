@@ -1,7 +1,7 @@
 import {ReactElement, useEffect, useState} from "react";
-import {dataStorage} from "../Users/UserData/Providers/DataStorage";
+import {dataStorage} from "../../../Users/UserData/Providers/DataStorage";
 
-export function ApplicationContent(): ReactElement {
+export function HomePage(): ReactElement {
 
     const [userName, setUserName] = useState('');
 
@@ -11,7 +11,7 @@ export function ApplicationContent(): ReactElement {
 
     return (
         <div>
-            <h1>Application Content</h1>
+            <h1>Home</h1>
             <br/>
             <div>
                 <h2>Hello {userName}</h2>
