@@ -19,4 +19,8 @@ export class LocalUserDataStorage implements IUserDataStorage {
     HasUserData(): boolean {
         return localStorage.getItem('userData') != null;
     }
+
+    Clear(): void {
+        localStorage.removeItem('userData');
+    }
 }

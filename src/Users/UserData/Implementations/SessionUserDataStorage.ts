@@ -16,5 +16,7 @@ export class SessionUserDataStorage implements IUserDataStorage {
         this._userData = value;
     }
 
-    HasUserData = (): boolean => this._userData != null;
+    HasUserData = (): boolean => this._userData != undefined;
+    
+    Clear = (): void => this._userData = undefined;
 }

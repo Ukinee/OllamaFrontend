@@ -1,6 +1,5 @@
-﻿import axios, {AxiosInstance} from 'axios';
+﻿import axios from 'axios';
 import Config from '../Config/config';
-import {IUserDataStorage} from "../Users/UserData/Interfaces/IUserDataStorage";
 
 export function CreateApiClient() {
 
@@ -8,6 +7,8 @@ export function CreateApiClient() {
         baseURL: Config.BaseUrl,
         timeout: Config.TimeoutMilliseconds,
         headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
             'Content-Type': 'application/json',
         }
     });

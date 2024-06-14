@@ -1,6 +1,6 @@
 import {ReactElement} from "react";
 import {Outlet} from "react-router-dom";
-import {DialogList} from "../DialogList/DialogList";
+import {DialogList} from "../ManualPages/ConversationsPage/DialogList/DialogList";
 
 export function ConversationsLayout(): ReactElement {
     return (
