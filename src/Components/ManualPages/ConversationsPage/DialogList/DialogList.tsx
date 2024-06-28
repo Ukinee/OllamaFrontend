@@ -1,33 +1,64 @@
 import {ReactElement, useEffect, useState} from "react";
-import {Link, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import {CreateAuthorisedApiClient} from "../../../../api/AuthorisedAxiosClient";
-import {dataStorage} from "../../../../Users/UserData/Providers/DataStorage";
-import {DialogService} from "../../../../Dialogs/Services/DialogService";
-import {GeneralConversationResponse} from "../../../../Dialogs/Models/GeneralConversationResponse";
+import {dataStorage} from "../../../../Models/Users/UserData/Providers/DataStorage";
+import {ConversationService} from "../../../../Models/Dialogs/Services/ConversationService";
+import {GeneralConversationResponse} from "../../../../Models/Dialogs/Models/GeneralConversationResponse";
+import {authorizationService} from "../../../../Models/Users/Services/AuthorizationServiceProvider";
 
-export function DialogList(): ReactElement {
+export function DialogList({refreshDialogs}: { refreshDialogs: () => void }): ReactElement {
+    const navigate = useNavigate();
 
     const [dialogs, setDialogs] = useState<GeneralConversationResponse[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    console.log("Creating Dialog List");
-    
     useEffect(() => {
-        const axios = CreateAuthorisedApiClient(dataStorage);
-        const dialogService: DialogService = new DialogService(axios);
-        
-        dialogService.GetDialogs()
-            .then(dialogs => setDialogs(dialogs))
-            .catch(error => console.log(error));
-    }, []);
+        async function getDialogs() {
+
+            setLoading(true);
+
+            if ((await authorizationService.TryAuthorize()) == false) {
+                navigate('/auth/login');
+                return;
+            }
+
+            const axios = CreateAuthorisedApiClient(dataStorage);
+            const dialogService: ConversationService = new ConversationService(axios);
+
+            try {
+                const dialogs = await dialogService.GetConversations();
+
+                setDialogs(dialogs);
+            } catch (e) {
+                console.error(e);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        getDialogs();
+
+    }, [refreshDialogs]);
+
+    if (loading) {
+        return <div>
+            <h1>Dialog List</h1>
+            <div>Loading...</div>
+        </div>;
+    }
 
     return (
         <div>
             <h1>Dialog List</h1>
             <ul>
                 {
-                    dialogs.map(dialog =>
-                        <Link to={`/conversations/${dialog.Id}`} key={dialog.Id}>{dialog.Name}</Link>)
+                    dialogs.map((dialog) => (
+                        <div key={dialog.Id}>
+                            <br/>
+                            <Link to={`/conversations/${dialog.Id}`}>{dialog.Name}</Link>
+                        </div>
+                    ))
                 }
             </ul>
         </div>

@@ -17,8 +17,6 @@ export class UserService {
         try {
             const response = await this._apiClient.get('User/CheckLogin')
 
-            console.log("Login response:\n", response.data);
-            
             return true;
             // @ts-ignore
         } catch (error: AxiosResponse<any, any>) {
@@ -48,10 +46,11 @@ export class UserService {
 
         const user: UserRequest = new UserRequest(username, password);
 
+
         try {
             const response = await this._apiClient.post('User/Register', user);
 
-            const {_, id, token, _1} = response.data;
+            const {_, id, token, _1} = await response.data;
 
             return new UserData(id, token);
         } catch (error) {
@@ -66,9 +65,9 @@ export class UserService {
             const user: UserRequest = new UserRequest(username, password);
             const response = await this._apiClient.post('User/Login', user);
 
+            console.log(response.data)
+            
             const {_, id, token, _1} = response.data;
-
-            console.log('Data:\n', response.data);
 
             return new UserData(id, token);
         } catch (error) {

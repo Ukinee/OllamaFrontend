@@ -1,19 +1,37 @@
 import {ReactElement, useEffect, useState} from "react";
-import {dataStorage} from "../../../Users/UserData/Providers/DataStorage";
-import {authorizationService} from "../../../Users/Services/AuthorizationServiceProvider";
-import {EnsureAuthorization} from "../../Common/EnsureAuthorization";
+import {dataStorage} from "../../../Models/Users/UserData/Providers/DataStorage";
+import {authorizationService} from "../../../Models/Users/Services/AuthorizationServiceProvider";
+import {useNavigate} from "react-router-dom";
+import {LoadingPage} from "../../ServicePages/LoadingPage/LoadingPage";
 
 export function HomePage(): ReactElement {
+    
+    const navigate = useNavigate(); 
+    
     const [userName, setUserName] = useState('');
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setUserName(dataStorage.UserData.Id);
+        const fetchData = async () => {
+            setLoading(true);
+
+            if ((await authorizationService.TryAuthorize()) == false) {
+                navigate('/auth/login');
+                return;
+            }
+
+            setLoading(false);
+
+            setUserName(dataStorage.UserData.Id);
+        };
+
+        fetchData();
     }, []);
     
-    if (authorizationService.IsAuthorized() == false) {
-        return EnsureAuthorization();
+    if (loading) {
+        return <LoadingPage/>
     }
-
+    
     return (
         <div>
             <h1>Home</h1>

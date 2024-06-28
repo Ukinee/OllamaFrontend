@@ -2,44 +2,39 @@ import React, {ReactElement, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {UserDataForm} from "../BaseForm/UserDataForm";
 import {CreateApiClient} from "../../../api/AxiosClient";
-import {UserService} from "../../../Users/Services/UserService";
-import {UserData} from "../../../Users/Models/UserModel";
-import {dataStorage} from "../../../Users/UserData/Providers/DataStorage";
-import {authorizationService} from "../../../Users/Services/AuthorizationServiceProvider";
+import {UserService} from "../../../Models/Users/Services/UserService";
+import {dataStorage} from "../../../Models/Users/UserData/Providers/DataStorage";
+import {authorizationService} from "../../../Models/Users/Services/AuthorizationServiceProvider";
 
 export function LoginPage(): ReactElement {
+    
     const navigate = useNavigate();
     const [available, setAvailable] = useState(true);
-    const [status, setStatus] = useState('AAA');
+    const [status, setStatus] = useState('');
 
     const onSubmit = async (username: string, password: string) => {
         if (available == false) {
             return;
         }
 
-        console.log("Pressed login button")
-
-        setStatus('AAA');
+        setStatus('');
         setAvailable(false);
 
-        console.log('Handling Login');
         await HandleLogin(username, password, setStatus);
 
-        console.log("Rechecking Authorization");
         if (await authorizationService.TryAuthorize() == false) {
             setAvailable(true);
             return;
         }
-
-        console.log("navigating");
 
         navigate("/");
     };
 
     return (
         <div>
-            <h1>{status}</h1>
+            <h1>Login</h1>
             {UserDataForm("Login", available, onSubmit)}
+            <p>{status}</p>
             <Link to="/auth/register">Register</Link>
         </div>
     );

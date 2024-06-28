@@ -1,6 +1,6 @@
 import axios, {AxiosInstance} from 'axios';
 import Config from '../Config/config';
-import {IUserDataStorage} from "../Users/UserData/Interfaces/IUserDataStorage";
+import {IUserDataStorage} from "../Models/Users/UserData/Interfaces/IUserDataStorage";
 
 export const CreateAuthorisedApiClient = (userDataStorage: IUserDataStorage): AxiosInstance => {
 

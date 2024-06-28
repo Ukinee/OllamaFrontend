@@ -18,12 +18,21 @@ export class AuthorizationService {
     }
 
     public async TryAuthorize(): Promise<boolean> {
+
+        if (this._isAuthorized) {
+            return true;
+        }
+
         const dataStorage: IUserDataStorage = this._userDataStorage;
         const userService: UserService = this._userService;
 
         if (dataStorage.HasUserData()) {
-            this._isAuthorized  = await userService.CheckLogin(dataStorage.UserData)
-
+            console.log("Checking login...");
+            
+            this._isAuthorized = await userService.CheckLogin(dataStorage.UserData)
+            
+            console.log("Authorized: ", this._isAuthorized);
+            
             return this._isAuthorized;
         }
 

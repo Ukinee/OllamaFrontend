@@ -6,10 +6,9 @@ export function CreateApiClient() {
     return axios.create({
         baseURL: Config.BaseUrl,
         timeout: Config.TimeoutMilliseconds,
+        withCredentials: false,
         headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-            'Content-Type': 'application/json',
+            // 'Content-Type': 'application/json',
         }
     });
 };
