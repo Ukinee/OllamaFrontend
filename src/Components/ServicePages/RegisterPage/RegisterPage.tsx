@@ -41,8 +41,7 @@ export function RegisterPage(): ReactElement {
 };
 
 async function HandleRegister(username: string, password: string, setStatus: any) {
-    const apiClient = CreateApiClient();
-    const userService: UserService = new UserService(apiClient);
+    const userService: UserService = new UserService();
 
     try {
         const data = await userService.RegisterUser(username, password);

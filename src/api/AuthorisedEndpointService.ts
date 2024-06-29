@@ -22,10 +22,9 @@ export class AuthorisedEndpointService {
 
     public async GetConversations(): Promise<GeneralConversationResponse[]> {
         const response =
-            await this._apiClient.get('Conversations/GetGeneralConversations');
+            await this._apiClient.get<GeneralConversationResponse[]>('Conversations/GetGeneralConversations');
 
-        return response.data.map((element: any) =>
-            new GeneralConversationResponse(element.id, element.name, element.context));
+        return response.data;
     }
 
     public async GetConcreteConversation(id: string): Promise<ConcreteConversationResponse> {

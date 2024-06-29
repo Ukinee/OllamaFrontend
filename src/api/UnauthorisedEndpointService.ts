@@ -1,6 +1,7 @@
 import {AxiosInstance} from "axios";
 import {UserData} from "../Models/Users/Models/UserModel";
 import {UserRequest} from "../Models/Users/Models/UserRequest";
+import {UserResponse} from "../Models/Users/Models/UserResponse";
 
 export class UnauthorisedEndpointService {
 
@@ -19,18 +20,14 @@ export class UnauthorisedEndpointService {
     }
     
     public async Register(userRequest : UserRequest) : Promise<UserData> {
-        const response = await this._apiClient.post('User/Register', userRequest);
+        const response = await this._apiClient.post<UserResponse>('User/Register', userRequest);
         
-        const {_, id, token, _1} = await response.data;
-        
-        return new UserData(id, token);
+        return new UserData(response.data.id, response.data.token);
     }
 
     public async LoginUser(userRequest : UserRequest): Promise<UserData> {
-        const response = await this._apiClient.post('User/Login', userRequest);
-        
-        const {_, id, token, _1} = await response.data;
-        
-        return new UserData(id, token);
+        const response = await this._apiClient.post<UserResponse>('User/Login', userRequest);
+
+        return new UserData(response.data.id, response.data.token);
     }
 }
