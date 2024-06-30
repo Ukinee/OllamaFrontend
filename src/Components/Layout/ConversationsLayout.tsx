@@ -1,7 +1,7 @@
 import {ReactElement, useState} from "react";
 import {Outlet} from "react-router-dom";
-import {DialogList} from "../ManualPages/ConversationsPage/DialogList/DialogList";
-import {CreateDialogButton} from "../ManualPages/ConversationsPage/CreateDialogButton/CreateDialogButton";
+import {DialogList} from "../ManualPages/ConversationsPage/LeftPanel/DialogList/DialogList";
+import {CreateDialogButton} from "../ManualPages/ConversationsPage/LeftPanel/CreateDialogButton/CreateDialogButton";
 
 export function ConversationsLayout(): ReactElement {
     const [update, setUpdate] = useState(false);

@@ -1,11 +1,8 @@
 import {ReactElement, useEffect, useState} from "react";
 import {Link, useNavigate, useParams} from "react-router-dom";
-import axios from "axios";
-import {CreateAuthorisedApiClient} from "../../../../api/AuthorisedAxiosClient";
-import {dataStorage} from "../../../../Models/Users/UserData/Providers/DataStorage";
-import {ConversationService} from "../../../../Models/Dialogs/Services/ConversationService";
-import {GeneralConversationResponse} from "../../../../Models/Dialogs/Models/GeneralConversationResponse";
-import {authorizationService} from "../../../../Models/Users/Services/AuthorizationServiceProvider";
+import {ConversationService} from "../../../../../Models/Dialogs/Services/ConversationService";
+import {GeneralConversationResponse} from "../../../../../Models/Dialogs/Models/GeneralConversationResponse";
+import {authorizationService} from "../../../../../Models/Users/Services/AuthorizationServiceProvider";
 
 export function DialogList({refreshDialogs}: { refreshDialogs: () => void }): ReactElement {
     const navigate = useNavigate();
@@ -23,8 +20,7 @@ export function DialogList({refreshDialogs}: { refreshDialogs: () => void }): Re
                 return;
             }
 
-            const axios = CreateAuthorisedApiClient(dataStorage);
-            const dialogService: ConversationService = new ConversationService(axios);
+            const dialogService: ConversationService = new ConversationService();
 
             try {
                 const dialogs = await dialogService.GetConversations();
@@ -54,9 +50,9 @@ export function DialogList({refreshDialogs}: { refreshDialogs: () => void }): Re
             <ul>
                 {
                     dialogs.map((dialog) => (
-                        <div key={dialog.Id}>
+                        <div key={dialog.id}>
                             <br/>
-                            <Link to={`/conversations/${dialog.Id}`}>{dialog.Name}</Link>
+                            <Link to={`/conversations/${dialog.id}`}>{dialog.name}</Link>
                         </div>
                     ))
                 }

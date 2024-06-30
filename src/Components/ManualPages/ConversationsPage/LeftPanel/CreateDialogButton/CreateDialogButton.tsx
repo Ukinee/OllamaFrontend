@@ -1,7 +1,7 @@
 import {ReactElement, useEffect, useState} from "react";
-import {CreateAuthorisedApiClient} from "../../../../api/AuthorisedAxiosClient";
-import {dataStorage} from "../../../../Models/Users/UserData/Providers/DataStorage";
-import {ConversationService} from "../../../../Models/Dialogs/Services/ConversationService";
+import {CreateAuthorisedApiClient} from "../../../../../api/AuthorisedAxiosClient";
+import {dataStorage} from "../../../../../Models/Users/UserData/Providers/DataStorage";
+import {ConversationService} from "../../../../../Models/Dialogs/Services/ConversationService";
 
 export function CreateDialogButton({refreshDialogs}: { refreshDialogs: () => void; }): ReactElement {
 
@@ -13,8 +13,7 @@ export function CreateDialogButton({refreshDialogs}: { refreshDialogs: () => voi
 
         setAvailable(false);
 
-        const axios = CreateAuthorisedApiClient(dataStorage);
-        const dialogService: ConversationService = new ConversationService(axios);
+        const dialogService: ConversationService = new ConversationService();
 
         await dialogService.CreateConversation();
 

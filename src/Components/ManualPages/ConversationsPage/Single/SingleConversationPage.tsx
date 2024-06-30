@@ -2,12 +2,11 @@ import {ReactElement, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {authorizationService} from "../../../../Models/Users/Services/AuthorizationServiceProvider";
 import {ConversationService} from "../../../../Models/Dialogs/Services/ConversationService";
-import {CreateAuthorisedApiClient} from "../../../../api/AuthorisedAxiosClient";
-import {dataStorage} from "../../../../Models/Users/UserData/Providers/DataStorage";
 import {ConcreteConversationResponse} from "../../../../Models/Dialogs/Models/ConcreteConversationResponse";
-import './SingleConversationPage.css';
-import {ControlPanel} from "../ControlPanel/ControlPanel";
 import {LoadingPage} from "../../../ServicePages/LoadingPage/LoadingPage";
+import {PersonaPanel} from "../ControlPanel/PersonaPanel";
+import './SingleConversationPage.css';
+import {ConversationPanel} from "../ControlPanel/ConversationPanel";
 
 export function SingleConversationPage(): ReactElement {
     const navigate = useNavigate();
@@ -28,8 +27,7 @@ export function SingleConversationPage(): ReactElement {
                 return;
             }
 
-            let client = CreateAuthorisedApiClient(dataStorage);
-            const conversationService: ConversationService = new ConversationService(client);
+            const conversationService: ConversationService = new ConversationService();
 
             const conversation: ConcreteConversationResponse = await conversationService.GetConcreteConversation(conversationId!);
             setConversation(conversation);
@@ -65,8 +63,10 @@ export function SingleConversationPage(): ReactElement {
                     ))}
                 </ul>
             </div>
+            
             <div className="controlPanel">
-                <ControlPanel conversationData={conversation!}/>
+                <ConversationPanel conversationData={conversation!}/>
+                <PersonaPanel/>
             </div>
         </div>
     );

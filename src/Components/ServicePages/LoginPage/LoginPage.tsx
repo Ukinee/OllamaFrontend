@@ -41,8 +41,7 @@ export function LoginPage(): ReactElement {
 };
 
 async function HandleLogin(username: string, password: string, setStatus: any) {
-    const apiClient = CreateApiClient();
-    const userService: UserService = new UserService(apiClient);
+    const userService: UserService = new UserService();
 
     try {
         const response = await userService.LoginUser(username, password)
