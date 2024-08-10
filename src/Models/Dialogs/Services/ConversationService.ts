@@ -8,6 +8,7 @@ import {userDataProvider} from "../../Users/UserData/Providers/UserDataProvider"
 import {UUID} from "node:crypto";
 import ConversationModel from "../Models/ConversationModel";
 import {MessageModel} from "../../Messages/Models/MessageModel";
+import {conversationDataProvider} from "../ConversationData/Providers/ConversationDataProvider";
 
 export class ConversationService {
     private _endpointService: AuthorisedEndpointService;
@@ -23,6 +24,7 @@ export class ConversationService {
         const payload = new PostConversationRequest(`new dialog`, ``, personaId);
 
         const response = await this._endpointService.PostConversation(payload);
+        await conversationDataProvider.Update(response.id);
 
         return response;
     }

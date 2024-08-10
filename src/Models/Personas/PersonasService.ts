@@ -16,10 +16,10 @@ export class PersonasService {
         this._endpointService = new AuthorisedEndpointService(apiClient);
     }
 
-    public async GetPersonas(): Promise<PersonasResponse> {
+    public async GetPersonas(): Promise<PersonaResponse[]> {
         const response = await this._endpointService.GetPersonas();
 
-        return response;
+        return response.personas;
     }
 
     public async PostPersona(name: string): Promise<PersonaResponse> {

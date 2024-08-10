@@ -1,7 +1,7 @@
-import React, {ReactElement, useState} from "react";
+import React, {ReactElement, useEffect, useRef, useState} from "react";
 import {RegisterPage} from "../Components/ServicePages/RegisterPage/RegisterPage";
 import {HomePage} from "../Components/ManualPages/HomePage/HomePage";
-import {Routes, Route, Navigate} from "react-router-dom";
+import {Routes, Route, Navigate, useNavigate} from "react-router-dom";
 import {Layout} from "../Components/Layout/Layout";
 import {SleepPage} from "../Components/ManualPages/SleepPage/SleepPage";
 import {ControlPage} from "../Components/ManualPages/ControlPage/ControlPage";
@@ -10,11 +10,61 @@ import {SingleConversationPage} from "../Components/ManualPages/ConversationsPag
 import {ConversationsLayout} from "../Components/Layout/ConversationsLayout";
 import {LoginPage} from "../Components/ServicePages/LoginPage/LoginPage";
 import {LoginLayout} from "../Components/Layout/LoginLayout";
+import {conversationDataProvider} from "../Models/Dialogs/ConversationData/Providers/ConversationDataProvider";
+import {UserService} from "../Models/Users/Services/UserService";
+import {userDataProvider} from "../Models/Users/UserData/Providers/UserDataProvider";
+import {LoadingPage} from "../Components/ServicePages/LoadingPage/LoadingPage";
 
 export function App(): ReactElement {
     const [update, setUpdate] = useState(false);
+    const [isLoading, setIsLoading] = useState(true)
+    const isInitializedRef = useRef(false);
+
+    let navigate = useNavigate();
+
+    useEffect(() => {
+        if (isInitializedRef.current) {
+            return;
+        }
+
+        isInitializedRef.current = true;
+
+        LoadConversations();
+
+        async function LoadConversations() {
+
+            let userService = new UserService();
+
+            console.log("Checking user data...");
+            
+            if (userDataProvider.HasUserData() == false) {
+                console.log("No data")
+                navigate("/auth/login");
+                return;
+            }
+
+            console.log("Checking login...");
+            
+            if (await userService.CheckLogin(userDataProvider.UserData) == false) {
+                console.log("No login")
+                navigate("/auth/login");
+                return;
+            }
+            
+            conversationDataProvider.Init();
+            await conversationDataProvider.LoadAll();
+            refreshDialogs();
+
+            setIsLoading(false);
+        }
+    }, []);
 
     const refreshDialogs = () => setUpdate(update === false);
+
+    if (isLoading)
+    {
+        return <LoadingPage/>
+    }
     
     return (
         <Routes>

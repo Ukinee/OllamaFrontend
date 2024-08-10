@@ -7,23 +7,28 @@ export function CreateDialogButton({refreshDialogs}: { refreshDialogs: () => voi
 
     const [isAvailable, setAvailable] = useState(true);
 
-    const onButtonClick = async () => {
-        if (isAvailable == false)
-            return;
+    function onClick() {
+        onButtonClickAsync();
 
-        setAvailable(false);
+        async function onButtonClickAsync() {
+            if (isAvailable == false)
+                return;
 
-        const dialogService: ConversationService = new ConversationService();
-        await dialogService.CreateConversation();
+            setAvailable(false);
 
-        refreshDialogs();
+            const dialogService: ConversationService = new ConversationService();
+            await dialogService.CreateConversation();
 
-        setAvailable(true);
+            refreshDialogs();
+
+            setAvailable(true);
+        }
     }
+
 
     return (
         <div>
-            <button onClick={onButtonClick} disabled={isAvailable == false}>
+            <button onClick={onClick} disabled={isAvailable == false}>
                 Create Dialog
             </button>
         </div>

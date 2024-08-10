@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
 
 interface DropdownMenuProps {
-items: string[];
-initialItem: string | undefined;
-onSelect: (item: string) => Promise<void>;
-onCreate: (item: string) => Promise<boolean>;
+    items: string[];
+    initialItem: string | undefined;
+    onSelect: (item: string) => Promise<void>;
+    onCreate: (item: string) => Promise<boolean>;
 }
 
 
-export function DropdownMenu({ items, onSelect, onCreate, initialItem }: DropdownMenuProps) {
+export function DropdownMenu({items, onSelect, onCreate, initialItem}: DropdownMenuProps) {
     const [menuItems, setMenuItems] = useState<string[]>(items);
     const [selectedItem, setSelectedItem] = useState<string | undefined>(initialItem);
     const [newItem, setNewItem] = useState<string>('');
@@ -16,40 +16,46 @@ export function DropdownMenu({ items, onSelect, onCreate, initialItem }: Dropdow
 
     useEffect(() => {
         setMenuItems(items);
+    }, [items]);
 
-        if (selectedItem && !items.includes(selectedItem)) {
-            const newSelectedItem = items.length > 0 ? items[0] : undefined;
-            setSelectedItem(newSelectedItem);
-            if (newSelectedItem) {
-                onSelect(newSelectedItem);
-            }
+    useEffect(() => {
+        if (selectedItem === undefined || items.includes(selectedItem)) {
+            return;
         }
-    }, [items, selectedItem, onSelect]);
+    }, [selectedItem, onSelect]);
 
     const handleSelect = (item: string) => {
-        setSelectedItem(item);
-        onSelect(item);
+        async function handleSelectAsync(item: string) {
+
+            await onSelect(item);
+            setSelectedItem(item);
+        }
+
+        handleSelectAsync(item)
     };
 
-    const handleAddItem = async () => {
-        const newEntry = newItem.trim();
+    function handleAddItem() {
+        async function handleAddItemAsync() {
+            const newEntry = newItem.trim();
 
-        if (newEntry && !menuItems.includes(newEntry)) {
+            if ((newEntry && !menuItems.includes(newEntry)) == false) {
+                return;
+            }
+
             setIsCreating(true);
-
             const result = await onCreate(newEntry);
-
             setIsCreating(false);
 
             if (result) {
                 const updatedMenuItems = [...menuItems, newEntry];
                 setMenuItems(updatedMenuItems);
                 setNewItem('');
-                setSelectedItem(newEntry);
-                onSelect(newEntry);
             }
-        }
-    };
+        };
+
+        handleAddItemAsync();
+    }
+
 
     return (
         <div>

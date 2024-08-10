@@ -5,30 +5,41 @@ import {PersonasService} from "../../../../Models/Personas/PersonasService";
 import {PersonaResponse} from "../../../../Models/Personas/Models/PersonaResponse";
 
 
-export function PersonaPanel({ refreshDialogs }: { refreshDialogs: () => void }): ReactElement {
-    const [items, setItems] = useState<PersonaResponse[]>([]);
-    const [initialItem, setInitialItem] = useState<string | undefined>();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+export function PersonaPanel({refreshDialogs}: { refreshDialogs: () => void }): ReactElement {
+
+    const [isInitialized, setIsInitialized] = useState(false)
+    const [initialItem, setInitialItem] = useState<string>("")
+
+    const [personas, setPersonas] = useState<PersonaResponse[]>([])
 
     useEffect(() => {
-        async function fetchData() {
-            setIsLoading(true);
+        async function GetPersonas() {
+            const service = new PersonasService();
+            const response = await service.GetPersonas();
 
-            const personasService = new PersonasService();
-            const response = await personasService.GetPersonas();
+            let personaId = userDataProvider.UserData.CurrentPersonaId;
+            let initialPersona = response.find(x => x.id == personaId);
 
-            setItems(response.personas);
-            const initialPersonaName = GetInitialItem(response.personas);
-            setInitialItem(initialPersonaName);
-            refreshDialogs();
-            setIsLoading(false);
+            if (initialPersona == undefined) {
+                throw new Error("Initial persona not found");
+            }
+
+            setPersonas(response);
+            setInitialItem(initialPersona.name);
+
+            setIsInitialized(true);
         }
 
-        fetchData();
+        GetPersonas();
     }, []);
 
-    if (isLoading) {
-        return <div>Loading...</div>;
+    if (isInitialized == false) {
+        return (
+            <div>
+                <h1>Persona Panel</h1>
+                <div>Loading...</div>
+            </div>
+        )
     }
 
     return (
@@ -36,45 +47,34 @@ export function PersonaPanel({ refreshDialogs }: { refreshDialogs: () => void })
             <h1>Persona Panel</h1>
             <DropdownMenu
                 initialItem={initialItem}
-                items={items.map(item => item.name)}
-                onSelect={(item) => OnSelect(item, items, refreshDialogs)}
-                onCreate={(item) => OnCreate(item, items, setItems)}
+                items={personas.map(item => item.name)}
+                onSelect={(item) => OnSelect(item, personas, refreshDialogs)}
+                onCreate={(item) => OnCreate(item, personas, setPersonas)}
             />
         </div>
     );
 }
 
-function GetInitialItem(personas: PersonaResponse[]): string | undefined {
-    const personaId = userDataProvider.UserData.CurrentPersonaId;
-    let initialPersona = personas.find(persona => persona.id === personaId);
+async function OnSelect(item: string, personas: PersonaResponse[], refreshDialogs: () => void) {
 
-    if (!initialPersona && personas.length > 0) {
-        initialPersona = personas[0];
-    }
+    let persona = personas.find(x => x.name == item);
 
-    return initialPersona?.name;
-}
-
-async function OnSelect(item: string, items: PersonaResponse[], refreshDialogs: () => void): Promise<void> {
-    const selectedPersona = items.find(persona => persona.name === item);
-
-    if (!selectedPersona) {
+    if (persona == undefined) {
         throw new Error("Persona not found");
     }
 
-    userDataProvider.UpdateCurrentPersona(selectedPersona.id);
+    userDataProvider.UpdateCurrentPersona(persona.id);
     refreshDialogs();
 }
 
-async function OnCreate(item: string, personas: PersonaResponse[], setPersonas: React.Dispatch<React.SetStateAction<PersonaResponse[]>>): Promise<boolean> {
-    try {
-        const personaService = new PersonasService();
-        const newPersona = await personaService.PostPersona(item);
+async function OnCreate(item: string, personas: PersonaResponse[], setPersonas: any): Promise<boolean> {
 
-        setPersonas([...personas, newPersona]);
+    try {
+        let personaService = new PersonasService();
+        let response = await personaService.PostPersona(item);
+        setPersonas([...personas, response]);
         return true;
     } catch (error) {
-        console.error(error);
         return false;
     }
-}
+} 

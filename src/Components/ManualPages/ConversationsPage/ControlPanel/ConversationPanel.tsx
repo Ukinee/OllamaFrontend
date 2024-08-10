@@ -1,4 +1,4 @@
-import {ReactElement, useState} from "react";
+import {ReactElement, useEffect, useState} from "react";
 import {ConversationService} from "../../../../Models/Dialogs/Services/ConversationService";
 import {PutConversationRequest} from "../../../../Models/Dialogs/Models/PutConversationRequest";
 import ConversationModel from "../../../../Models/Dialogs/Models/ConversationModel";
@@ -7,6 +7,11 @@ export function ConversationPanel({ conversationData }: { conversationData: Conv
     const [name, setName] = useState(conversationData.Name);
     const [globalContext, setGlobalContext] = useState(conversationData.GlobalContext);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        setName(conversationData.Name);
+        setGlobalContext(conversationData.GlobalContext);
+    }, [conversationData]);
 
     const handleUpdate = async () => {
         const dialogService = new ConversationService();

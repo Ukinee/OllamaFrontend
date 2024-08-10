@@ -15,28 +15,23 @@ export function useMessages(conversationId: string, refreshDialogs: () => void) 
     };
 
     useEffect(() => {
-        if (!loading && conversation) {
-            const loadedMessages = conversation.Messages || [];
-            
-            if (loadedMessages.length === 0) {
-                setHasMore(false);
-            } else {
-                setMessages(prevMessages => {
-                    const existingIds = new Set(prevMessages.map(message => message.Id));
-                    const newUniqueMessages = loadedMessages.filter(message => !existingIds.has(message.Id));
-
-                    const result = [...prevMessages, ...newUniqueMessages];
-
-
-                    result.sort((a: MessageModel, b: MessageModel) =>
-                        new Date(a.Timestamp).getTime() - new Date(b.Timestamp).getTime()
-                    );
-
-                    return result;
-                });
-            }
+        if (loading || conversation === null){
+            console.log( "Loading messages..." );
+            return;
         }
-    }, [loading, conversation]);
+        
+        if (conversation.Messages.length === messages.length) {
+            console.log( "No more messages" );
+            setHasMore(false);
+            return;
+        }
+
+        console.log(conversation.Messages)
+        
+        setMessages(conversation.Messages.sort((a, b) => 
+            new Date(a.Timestamp).getTime() - new Date(b.Timestamp).getTime()));
+
+    }, [page, conversationId, loading, conversation]);
 
     return {
         messages,

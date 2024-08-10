@@ -1,14 +1,11 @@
 import React, {useEffect, useRef} from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {MessageModel} from "../../../../Models/Messages/Models/MessageModel";
 import {useMessages} from "../../../../Models/Messages/Hooks/useMessages";
 
 export function MessageList({conversationId, refreshDialogs}: { conversationId: string, refreshDialogs: () => void }) {
-    let initialMessages: MessageModel[] = [];
-
     const {messages, fetchMessages, hasMore, loading} =
         useMessages(conversationId, refreshDialogs);
-
+    
     const scrollableDivRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -16,6 +13,10 @@ export function MessageList({conversationId, refreshDialogs}: { conversationId: 
             scrollableDivRef.current.scrollTop = scrollableDivRef.current.scrollHeight;
         }
     }, [messages]);
+    
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div>

@@ -1,75 +1,42 @@
-import {ReactElement, useEffect, useState} from "react";
-import {Link, useNavigate, useParams} from "react-router-dom";
-import {authorizationService} from "../../../../../Models/Users/Services/AuthorizationServiceProvider";
-import {userDataProvider} from "../../../../../Models/Users/UserData/Providers/UserDataProvider";
+import {ReactElement, useEffect, useRef, useState} from "react";
+import {Link} from "react-router-dom";
+import ConversationModel from "../../../../../Models/Dialogs/Models/ConversationModel";
 import {
     conversationDataProvider
 } from "../../../../../Models/Dialogs/ConversationData/Providers/ConversationDataProvider";
-import ConversationModel from "../../../../../Models/Dialogs/Models/ConversationModel";
+import {userDataProvider} from "../../../../../Models/Users/UserData/Providers/UserDataProvider";
+import {UUID} from "node:crypto";
 
 export function DialogList({refreshDialogs}: { refreshDialogs: () => void }): ReactElement {
-    const navigate = useNavigate();
+    const [conversationModels, setConversationModels] = useState<ConversationModel[]>([])
 
-    const [dialogs, setDialogs] = useState<ConversationModel[]>([]);
-    const [loading, setLoading] = useState(true);
-
+    const isRefreshing = useRef(false);
+    
     useEffect(() => {
-        async function getDialogs() {
+        RefreshDialogs();
 
-            setLoading(true);
-            await conversationDataProvider.GetAll();
-            
-            const dialogs = await conversationDataProvider.GetByPersonId(userDataProvider.UserData.CurrentPersonaId);
-            setDialogs(dialogs);
-            setLoading(false);
-            
-            refreshDialogs();
-        }
-
-        getDialogs();
-    }, []);
-
-    useEffect(() => {
-        async function getDialogs() {
-
-            setLoading(true);
-
-            if ((await authorizationService.TryAuthorize()) == false) {
-                navigate('/auth/login');
+        async function RefreshDialogs() {
+            if (isRefreshing.current) {
                 return;
             }
 
-            try {
-                console.log("Reading dialogs per persona:")
-                const dialogs = await conversationDataProvider.GetByPersonId(userDataProvider.UserData.CurrentPersonaId);
-
-                console.log(dialogs)
-
-                setDialogs(dialogs);
-            } catch (e) {
-                console.error(e);
-            } finally {
-                setLoading(false);
-            }
+            isRefreshing.current = true;
+            
+            let currentPersonaId: UUID = userDataProvider.UserData.CurrentPersonaId;
+            let conversationModels = await conversationDataProvider.GetByPersonaId(currentPersonaId);
+            console.log(conversationModels)
+            setConversationModels(conversationModels);
+            
+            isRefreshing.current = false;
         }
-
-        getDialogs();
-
     }, [refreshDialogs]);
-
-    if (loading) {
-        return <div>
-            <h1>Dialog List</h1>
-            <div>Loading...</div>
-        </div>;
-    }
 
     return (
         <div>
             <h1>Dialog List</h1>
             <ul>
                 {
-                    dialogs.map((dialog) => (
+                    conversationModels.map((dialog) => (
                         <div key={dialog.Id}>
                             <br/>
                             <Link to={`/conversations/${dialog.Id}`}>{dialog.Name}</Link>
