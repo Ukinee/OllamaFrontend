@@ -1,11 +1,9 @@
 export class PostPersonaRequest{
     public name: string;
-    public role: string;
-    public description: string;
+    public userId: string;
     
-    constructor(name: string, role: string, description: string){
+    constructor(name: string, userId: string){
         this.name = name;
-        this.role = role;
-        this.description = description;
+        this.userId = userId;
     }
 }

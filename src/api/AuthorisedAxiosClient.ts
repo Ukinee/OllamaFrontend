@@ -1,8 +1,8 @@
 import axios, {AxiosInstance} from 'axios';
 import Config from '../Config/config';
-import {IUserDataStorage} from "../Models/Users/UserData/Interfaces/IUserDataStorage";
+import {IUserDataProvider} from "../Models/Users/UserData/Interfaces/IUserDataProvider";
 
-export const CreateAuthorisedApiClient = (userDataStorage: IUserDataStorage): AxiosInstance => {
+export const CreateAuthorisedApiClient = (userDataStorage: IUserDataProvider): AxiosInstance => {
 
     if (userDataStorage.HasUserData() === false) {
         throw new Error('User data not set during api client creation');

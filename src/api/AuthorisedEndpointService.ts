@@ -9,6 +9,8 @@ import {PersonasResponse} from "../Models/Personas/Models/PersonasResponse";
 import {PostPersonaRequest} from "../Models/Personas/Models/PostPersonaRequest";
 import {PersonaResponse} from "../Models/Personas/Models/PersonaResponse";
 import {PutPersonaRequest} from "../Models/Personas/Models/PutPersonaRequest";
+import {UUID} from "node:crypto";
+import {userDataProvider} from "../Models/Users/UserData/Providers/UserDataProvider";
 
 export class AuthorisedEndpointService {
 
@@ -20,20 +22,19 @@ export class AuthorisedEndpointService {
     
     // Conversations
 
-    public async GetConversations(): Promise<GeneralConversationResponse[]> {
+    public async GetConversations(personaId: UUID): Promise<GeneralConversationResponse[]> {
         const response =
-            await this._apiClient.get<GeneralConversationResponse[]>('Conversations/GetGeneralConversations');
+            await this._apiClient.get<GeneralConversationResponse[]>(`Conversations/GetGeneralConversations/${personaId}`);
 
         return response.data;
     }
 
-    public async GetConcreteConversation(id: string): Promise<ConcreteConversationResponse> {
-        const response =
-            await this._apiClient.get<ConcreteConversationResponse>(`Conversation/${id}`);
-
+    public async GetConcreteConversation(id: string, page: number): Promise<ConcreteConversationResponse> {
+        const response = await this._apiClient.get<ConcreteConversationResponse>(`Conversation/${id}/messages/page/${page}`);
+        
         return response.data;
     }
-
+    
     public async PostConversation(payload: PostConversationRequest): Promise<GeneralConversationResponse> {
         const response =
             await this._apiClient.post<GeneralConversationResponse>('Conversation', payload);
@@ -52,7 +53,7 @@ export class AuthorisedEndpointService {
 
     public async PostMessage(payload : PostMessageRequest) : Promise<MessageResponse> {
         const response =
-            await this._apiClient.post<MessageResponse>('Message/PostMessage', payload);
+            await this._apiClient.post<MessageResponse>('Message', payload);
 
         return response.data;
     }
@@ -64,7 +65,9 @@ export class AuthorisedEndpointService {
     // Personas
     
     public async GetPersonas() {
-        const response = await this._apiClient.get<PersonasResponse>('Personas');
+        let userId = userDataProvider.UserData.Id;
+        
+        const response = await this._apiClient.get<PersonasResponse>(`Personas/${userId}`);
         
         return response.data;
     }

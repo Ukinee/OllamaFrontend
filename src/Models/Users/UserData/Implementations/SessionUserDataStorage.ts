@@ -1,7 +1,8 @@
-import {IUserDataStorage} from "../Interfaces/IUserDataStorage";
+import {IUserDataProvider} from "../Interfaces/IUserDataProvider";
 import {UserData} from "../../Models/UserModel";
+import {UUID} from "node:crypto";
 
-export class SessionUserDataStorage implements IUserDataStorage {
+export class SessionUserDataStorage implements IUserDataProvider {
     private _userData? : UserData;
 
     get UserData(): UserData {
@@ -10,6 +11,10 @@ export class SessionUserDataStorage implements IUserDataStorage {
         }
 
         return this._userData;
+    }
+    
+    UpdateCurrentPersona(id: UUID) {
+        
     }
 
     set UserData(value: UserData) {

@@ -22,12 +22,12 @@ export class UnauthorisedEndpointService {
     public async Register(userRequest : UserRequest) : Promise<UserData> {
         const response = await this._apiClient.post<UserResponse>('User/Register', userRequest);
         
-        return new UserData(response.data.id, response.data.token);
+        return new UserData(response.data);
     }
 
     public async LoginUser(userRequest : UserRequest): Promise<UserData> {
         const response = await this._apiClient.post<UserResponse>('User/Login', userRequest);
 
-        return new UserData(response.data.id, response.data.token);
+        return new UserData(response.data);
     }
 }

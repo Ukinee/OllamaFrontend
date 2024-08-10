@@ -1,4 +1,4 @@
-import React, {ReactElement} from "react";
+import React, {ReactElement, useState} from "react";
 import {RegisterPage} from "../Components/ServicePages/RegisterPage/RegisterPage";
 import {HomePage} from "../Components/ManualPages/HomePage/HomePage";
 import {Routes, Route, Navigate} from "react-router-dom";
@@ -12,15 +12,19 @@ import {LoginPage} from "../Components/ServicePages/LoginPage/LoginPage";
 import {LoginLayout} from "../Components/Layout/LoginLayout";
 
 export function App(): ReactElement {
+    const [update, setUpdate] = useState(false);
+
+    const refreshDialogs = () => setUpdate(update === false);
+    
     return (
         <Routes>
             <Route path="/" element={<Layout/>}>
                 <Route index element={<HomePage/>}/>
                 <Route path="control" element={<ControlPage/>}/>
                 <Route path="sleep" element={<SleepPage/>}/>
-                <Route path="conversations" element={<ConversationsLayout/>}>
+                <Route path="conversations" element={<ConversationsLayout refreshDialogs={refreshDialogs}/>}>
                     <Route index element={<ConversationPage/>}/>
-                    <Route path=":conversationId" element={<SingleConversationPage/>}/>
+                    <Route path=":conversationId" element={<SingleConversationPage refreshDialogs={refreshDialogs}/>}/>
                 </Route>
                 <Route path="*" element={<div>404</div>}/>
             </Route>

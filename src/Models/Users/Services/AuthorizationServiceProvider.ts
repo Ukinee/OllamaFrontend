@@ -1,6 +1,6 @@
 import {AuthorizationService} from "./AuthorizationService";
-import {dataStorage} from "../UserData/Providers/DataStorage";
+import {userDataProvider} from "../UserData/Providers/UserDataProvider";
 import {UserService} from "./UserService";
 import {CreateApiClient} from "../../../api/AxiosClient";
 
-export const authorizationService = new AuthorizationService(dataStorage, new UserService());
+export const authorizationService = new AuthorizationService(userDataProvider, new UserService());

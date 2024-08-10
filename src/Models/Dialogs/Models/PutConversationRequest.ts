@@ -5,11 +5,11 @@ export class PutConversationRequest {
         context: string
     ) {
         this.id = id;
-        this.globalContext = context;
+        this.context = context;
         this.name = name;
     }
 
     public readonly name: string;
-    public readonly globalContext: string;
+    public readonly context: string;
     public readonly id: string;
 }

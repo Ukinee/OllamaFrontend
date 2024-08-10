@@ -1,7 +1,7 @@
 import {AxiosInstance} from "axios";
 import {AuthorisedEndpointService} from "../../../api/AuthorisedEndpointService";
 import {CreateAuthorisedApiClient} from "../../../api/AuthorisedAxiosClient";
-import {dataStorage} from "../../Users/UserData/Providers/DataStorage";
+import {userDataProvider} from "../../Users/UserData/Providers/UserDataProvider";
 import {MessageResponse} from "../Models/MessageResponse";
 import { PostMessageRequest } from "../Models/PostMessageRequest";
 
@@ -9,14 +9,15 @@ export class MessageService {
     private _endpointService: AuthorisedEndpointService;
 
     constructor() {
-        const apiClient: AxiosInstance = CreateAuthorisedApiClient(dataStorage);
+        const apiClient: AxiosInstance = CreateAuthorisedApiClient(userDataProvider);
 
         this._endpointService = new AuthorisedEndpointService(apiClient);
     }
 
-    public async PostMessage(conversationId: string, personaId: string, content: string, images: string[]) 
+    public async PostMessage(conversationId: string, content: string, images: string[]) 
         : Promise<MessageResponse> {
 
+        let personaId : string = userDataProvider.UserData.CurrentPersonaId
         const payload = new PostMessageRequest(conversationId, personaId, content, images);
 
         const response = await this._endpointService.PostMessage(payload);

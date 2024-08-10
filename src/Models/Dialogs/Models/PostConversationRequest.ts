@@ -1,10 +1,14 @@
+import {UUID} from "node:crypto";
+
 export class PostConversationRequest {
 
-    constructor(name: string, globalContext: string) {
-        this.Name = name;
-        this.GlobalContext = globalContext;
+    constructor(name: string, globalContext: string, personaId:UUID) {
+        this.name = name;
+        this.context = globalContext;
+        this.personaId = personaId;
     }
 
-    public Name: string
-    public GlobalContext: string
+    private personaId: UUID;
+    public name: string
+    public context: string
 }

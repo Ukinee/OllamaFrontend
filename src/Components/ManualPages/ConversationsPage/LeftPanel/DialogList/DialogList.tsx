@@ -1,14 +1,33 @@
 import {ReactElement, useEffect, useState} from "react";
 import {Link, useNavigate, useParams} from "react-router-dom";
-import {ConversationService} from "../../../../../Models/Dialogs/Services/ConversationService";
-import {GeneralConversationResponse} from "../../../../../Models/Dialogs/Models/GeneralConversationResponse";
 import {authorizationService} from "../../../../../Models/Users/Services/AuthorizationServiceProvider";
+import {userDataProvider} from "../../../../../Models/Users/UserData/Providers/UserDataProvider";
+import {
+    conversationDataProvider
+} from "../../../../../Models/Dialogs/ConversationData/Providers/ConversationDataProvider";
+import ConversationModel from "../../../../../Models/Dialogs/Models/ConversationModel";
 
 export function DialogList({refreshDialogs}: { refreshDialogs: () => void }): ReactElement {
     const navigate = useNavigate();
 
-    const [dialogs, setDialogs] = useState<GeneralConversationResponse[]>([]);
+    const [dialogs, setDialogs] = useState<ConversationModel[]>([]);
     const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function getDialogs() {
+
+            setLoading(true);
+            await conversationDataProvider.GetAll();
+            
+            const dialogs = await conversationDataProvider.GetByPersonId(userDataProvider.UserData.CurrentPersonaId);
+            setDialogs(dialogs);
+            setLoading(false);
+            
+            refreshDialogs();
+        }
+
+        getDialogs();
+    }, []);
 
     useEffect(() => {
         async function getDialogs() {
@@ -20,10 +39,11 @@ export function DialogList({refreshDialogs}: { refreshDialogs: () => void }): Re
                 return;
             }
 
-            const dialogService: ConversationService = new ConversationService();
-
             try {
-                const dialogs = await dialogService.GetConversations();
+                console.log("Reading dialogs per persona:")
+                const dialogs = await conversationDataProvider.GetByPersonId(userDataProvider.UserData.CurrentPersonaId);
+
+                console.log(dialogs)
 
                 setDialogs(dialogs);
             } catch (e) {
@@ -50,9 +70,9 @@ export function DialogList({refreshDialogs}: { refreshDialogs: () => void }): Re
             <ul>
                 {
                     dialogs.map((dialog) => (
-                        <div key={dialog.id}>
+                        <div key={dialog.Id}>
                             <br/>
-                            <Link to={`/conversations/${dialog.id}`}>{dialog.name}</Link>
+                            <Link to={`/conversations/${dialog.Id}`}>{dialog.Name}</Link>
                         </div>
                     ))
                 }

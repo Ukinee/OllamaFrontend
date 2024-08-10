@@ -1,5 +1,5 @@
 import {ReactElement, useEffect, useState} from "react";
-import {dataStorage} from "../../../Models/Users/UserData/Providers/DataStorage";
+import {userDataProvider} from "../../../Models/Users/UserData/Providers/UserDataProvider";
 import {authorizationService} from "../../../Models/Users/Services/AuthorizationServiceProvider";
 import {useNavigate} from "react-router-dom";
 import {LoadingPage} from "../../ServicePages/LoadingPage/LoadingPage";
@@ -22,7 +22,7 @@ export function HomePage(): ReactElement {
 
             setLoading(false);
 
-            setUserName(dataStorage.UserData.Id);
+            setUserName(userDataProvider.UserData.Id);
         };
 
         fetchData();

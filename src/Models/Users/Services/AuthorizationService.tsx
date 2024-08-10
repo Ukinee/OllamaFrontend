@@ -1,14 +1,14 @@
-import {IUserDataStorage} from "../UserData/Interfaces/IUserDataStorage";
+import {IUserDataProvider} from "../UserData/Interfaces/IUserDataProvider";
 import {UserService} from "./UserService";
 import {ReactElement} from "react";
 
 export class AuthorizationService {
 
-    private readonly _userDataStorage: IUserDataStorage;
+    private readonly _userDataStorage: IUserDataProvider;
     private readonly _userService: UserService;
     private _isAuthorized: boolean = false;
 
-    constructor(userDataStorage: IUserDataStorage, userService: UserService) {
+    constructor(userDataStorage: IUserDataProvider, userService: UserService) {
         this._userDataStorage = userDataStorage;
         this._userService = userService;
     }
@@ -23,7 +23,7 @@ export class AuthorizationService {
             return true;
         }
 
-        const dataStorage: IUserDataStorage = this._userDataStorage;
+        const dataStorage: IUserDataProvider = this._userDataStorage;
         const userService: UserService = this._userService;
 
         if (dataStorage.HasUserData()) {

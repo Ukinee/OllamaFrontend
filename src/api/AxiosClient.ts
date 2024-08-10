@@ -8,7 +8,7 @@ export function CreateApiClient() {
         timeout: Config.TimeoutMilliseconds,
         withCredentials: false,
         headers: {
-            // 'Content-Type': 'application/json',
+            'Content-Type': 'application/json',
         }
     });
 };

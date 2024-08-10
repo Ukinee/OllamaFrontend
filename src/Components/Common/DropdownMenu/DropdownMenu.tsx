@@ -1,39 +1,59 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 interface DropdownMenuProps {
-    items: string[];
-    onSelect: (item: string) => void;
-    onCreate: (item: string) => Promise<void>;
+items: string[];
+initialItem: string | undefined;
+onSelect: (item: string) => Promise<void>;
+onCreate: (item: string) => Promise<boolean>;
 }
 
-export function DropdownMenu({items, onSelect, onCreate}: DropdownMenuProps) {
+
+export function DropdownMenu({ items, onSelect, onCreate, initialItem }: DropdownMenuProps) {
     const [menuItems, setMenuItems] = useState<string[]>(items);
+    const [selectedItem, setSelectedItem] = useState<string | undefined>(initialItem);
     const [newItem, setNewItem] = useState<string>('');
     const [isCreating, setIsCreating] = useState<boolean>(false);
 
+    useEffect(() => {
+        setMenuItems(items);
+
+        if (selectedItem && !items.includes(selectedItem)) {
+            const newSelectedItem = items.length > 0 ? items[0] : undefined;
+            setSelectedItem(newSelectedItem);
+            if (newSelectedItem) {
+                onSelect(newSelectedItem);
+            }
+        }
+    }, [items, selectedItem, onSelect]);
+
     const handleSelect = (item: string) => {
+        setSelectedItem(item);
         onSelect(item);
     };
 
     const handleAddItem = async () => {
-
         const newEntry = newItem.trim();
 
-        if (newEntry && menuItems.includes(newEntry) == false) {
+        if (newEntry && !menuItems.includes(newEntry)) {
             setIsCreating(true);
-            
-            await onCreate(newEntry);
+
+            const result = await onCreate(newEntry);
 
             setIsCreating(false);
-            
-            setMenuItems([...menuItems, newEntry]);
-            setNewItem('');
+
+            if (result) {
+                const updatedMenuItems = [...menuItems, newEntry];
+                setMenuItems(updatedMenuItems);
+                setNewItem('');
+                setSelectedItem(newEntry);
+                onSelect(newEntry);
+            }
         }
     };
 
     return (
         <div>
-            <select onChange={(e) => handleSelect(e.target.value)}>
+            <select value={selectedItem} onChange={(e) => handleSelect(e.target.value)}>
                 {menuItems.map((item, index) => (
                     <option key={index} value={item}>
                         {item}
@@ -47,8 +67,8 @@ export function DropdownMenu({items, onSelect, onCreate}: DropdownMenuProps) {
                     onChange={(e) => setNewItem(e.target.value)}
                     placeholder="Add new item"
                 />
-                <button onClick={handleAddItem}>Add</button>
+                <button onClick={handleAddItem} disabled={isCreating}>Add</button>
             </div>
         </div>
     );
-};
+}

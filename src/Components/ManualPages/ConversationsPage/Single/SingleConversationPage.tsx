@@ -1,73 +1,46 @@
-import {ReactElement, useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
-import {authorizationService} from "../../../../Models/Users/Services/AuthorizationServiceProvider";
-import {ConversationService} from "../../../../Models/Dialogs/Services/ConversationService";
-import {ConcreteConversationResponse} from "../../../../Models/Dialogs/Models/ConcreteConversationResponse";
-import {LoadingPage} from "../../../ServicePages/LoadingPage/LoadingPage";
-import {PersonaPanel} from "../ControlPanel/PersonaPanel";
+import { useParams } from "react-router-dom";
 import './SingleConversationPage.css';
-import {ConversationPanel} from "../ControlPanel/ConversationPanel";
+import { ConversationPanel } from "../ControlPanel/ConversationPanel";
+import { MessageList } from "../MessageList/MessageList";
+import { UseConversation } from "../../../../api/Hooks/useConversation";
+import { LoadingPage } from "../../../ServicePages/LoadingPage/LoadingPage";
+import { MessageInputPanel } from "../MessageInputPanel/MessageInputPanel";
+import {userDataProvider} from "../../../../Models/Users/UserData/Providers/UserDataProvider";
 
-export function SingleConversationPage(): ReactElement {
-    const navigate = useNavigate();
+export function SingleConversationPage({ refreshDialogs }: { refreshDialogs: () => void }) {
+    const { conversationId } = useParams();
+    const { loading, conversation } = UseConversation(conversationId, 1, refreshDialogs);
 
-    const conversationId: string | undefined = useParams().conversationId;
-    const [loading, setLoading] = useState(true);
-    const [conversation, setConversation] =
-        useState<ConcreteConversationResponse>();
-
-
-    useEffect(() => {
-        async function getMessages() {
-
-            setLoading(true);
-            
-            if ((await authorizationService.TryAuthorize()) == false) {
-                navigate('/auth/login');
-                return;
-            }
-
-            const conversationService: ConversationService = new ConversationService();
-
-            const conversation: ConcreteConversationResponse = await conversationService.GetConcreteConversation(conversationId!);
-            setConversation(conversation);
-
-            setLoading(false);
-        }
-
-        getMessages();
-    }, [conversationId]);
-
-    if (conversationId === undefined || conversation === null) {
+    if (conversationId === undefined || conversation === undefined || conversation === null) {
         return (
             <div>
                 <h1>Broken Conversation PoroSad</h1>
             </div>
         );
     }
-
+    
     if (loading) {
-        return <LoadingPage/>;
+        return <LoadingPage />;
+    }
+    
+    if (!conversation.PersonasIds.some(x => x === userDataProvider.UserData.CurrentPersonaId)) {
+        return (
+            <div>
+                <h1>Invalid access!!!!!</h1>
+            </div>
+        );
     }
 
     return (
         <div className="root">
             <div className="messages">
-                <h1>Single Conversation : {conversation!.name}</h1>
-                <ul>
-                    <li>Messages:</li>
-                    {conversation!.messages.map((message) => (
-                        <li key={message.Id}>
-                            {message.ChatName} as {message.ChatRole}: {message.Content}
-                        </li>
-                    ))}
-                </ul>
+                <MessageList conversationId={conversationId} refreshDialogs={refreshDialogs} />
+                <MessageInputPanel conversationId={conversationId} />
             </div>
-            
+
             <div className="controlPanel">
-                <ConversationPanel conversationData={conversation!}/>
-                <PersonaPanel/>
+                <ConversationPanel conversationData={conversation} />
             </div>
         </div>
     );
-} 
+}

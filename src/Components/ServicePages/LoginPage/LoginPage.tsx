@@ -3,7 +3,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {UserDataForm} from "../BaseForm/UserDataForm";
 import {CreateApiClient} from "../../../api/AxiosClient";
 import {UserService} from "../../../Models/Users/Services/UserService";
-import {dataStorage} from "../../../Models/Users/UserData/Providers/DataStorage";
+import {userDataProvider} from "../../../Models/Users/UserData/Providers/UserDataProvider";
 import {authorizationService} from "../../../Models/Users/Services/AuthorizationServiceProvider";
 
 export function LoginPage(): ReactElement {
@@ -45,7 +45,8 @@ async function HandleLogin(username: string, password: string, setStatus: any) {
 
     try {
         const response = await userService.LoginUser(username, password)
-        dataStorage.UserData = response;
+        
+        userDataProvider.UserData = response;
     } catch {
         setStatus('Unauthorized');
     }

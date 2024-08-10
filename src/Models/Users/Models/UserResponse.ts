@@ -1,13 +1,15 @@
+import {UUID} from "node:crypto";
+
 export class UserResponse{
     public id: string;
-    public username: string;
+    public userName: string;
     public token: string;
-    public conversationIds: string[];
+    public personasIds: UUID[];
     
-    constructor(id: string, username: string, token: string, conversationIds: string[]) {
+    constructor(id: string, userName: string, token: string, personasIds: UUID[]) {
         this.id = id;
-        this.username = username;
+        this.userName = userName;
         this.token = token;
-        this.conversationIds = conversationIds;
+        this.personasIds = personasIds;
     }
 }

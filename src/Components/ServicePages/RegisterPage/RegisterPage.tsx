@@ -2,7 +2,7 @@
 import {UserDataForm} from "../BaseForm/UserDataForm";
 import {CreateApiClient} from "../../../api/AxiosClient";
 import {UserService} from "../../../Models/Users/Services/UserService";
-import {dataStorage} from "../../../Models/Users/UserData/Providers/DataStorage";
+import {userDataProvider} from "../../../Models/Users/UserData/Providers/UserDataProvider";
 import {Link, useNavigate} from "react-router-dom";
 import {authorizationService} from "../../../Models/Users/Services/AuthorizationServiceProvider";
 
@@ -45,7 +45,7 @@ async function HandleRegister(username: string, password: string, setStatus: any
 
     try {
         const data = await userService.RegisterUser(username, password);
-        dataStorage.UserData = data;
+        userDataProvider.UserData = data;
     } catch (ex) {
         setStatus('Unauthorized');
     }

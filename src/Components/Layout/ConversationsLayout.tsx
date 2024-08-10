@@ -2,21 +2,23 @@ import {ReactElement, useState} from "react";
 import {Outlet} from "react-router-dom";
 import {DialogList} from "../ManualPages/ConversationsPage/LeftPanel/DialogList/DialogList";
 import {CreateDialogButton} from "../ManualPages/ConversationsPage/LeftPanel/CreateDialogButton/CreateDialogButton";
+import {PersonaPanel} from "../ManualPages/ConversationsPage/ControlPanel/PersonaPanel";
 
-export function ConversationsLayout(): ReactElement {
-    const [update, setUpdate] = useState(false);
-
-    const refreshDialogs = () => setUpdate(update == false);
-    
+export function ConversationsLayout({ refreshDialogs }: { refreshDialogs: () => void }): ReactElement {
     return (
-        <div style={{ display: 'flex', flexDirection: 'row', flex: 1 }}>
-            <div style={{ width: '300px', border: '1px solid black', overflowY: 'auto' }}>
-                <CreateDialogButton refreshDialogs={refreshDialogs} />
-                <DialogList refreshDialogs={refreshDialogs} />
+        <div style={{flexDirection: 'row', display: 'flex', flex: 1}}>
+            <div style={{flexDirection: 'column', width: '300px'}}>
+                <div style={{border: '1px solid black'}}>
+                    <PersonaPanel refreshDialogs={refreshDialogs}/>
+                </div>
+                <div style={{border: '1px solid black'}}>
+                    <CreateDialogButton refreshDialogs={refreshDialogs}/>
+                    <DialogList refreshDialogs={refreshDialogs}/>
+                </div>
             </div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: '10px' }}>
-                <Outlet />
+            <div style={{flex: 1}}>
+                <Outlet/>
             </div>
         </div>
-    );
+    )
 }
