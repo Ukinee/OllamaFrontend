@@ -6,6 +6,7 @@ import {
 } from "../../../../../Models/Dialogs/ConversationData/Providers/ConversationDataProvider";
 import {userDataProvider} from "../../../../../Models/Users/UserData/Providers/UserDataProvider";
 import {UUID} from "node:crypto";
+import {ConversationItem} from "../../../../../Models/Dialogs/Components/ConversationItem";
 
 export function DialogList({refreshDialogs}: { refreshDialogs: () => void }): ReactElement {
     const [conversationModels, setConversationModels] = useState<ConversationModel[]>([])
@@ -24,7 +25,6 @@ export function DialogList({refreshDialogs}: { refreshDialogs: () => void }): Re
             
             let currentPersonaId: UUID = userDataProvider.UserData.CurrentPersonaId;
             let conversationModels = await conversationDataProvider.GetByPersonaId(currentPersonaId);
-            console.log(conversationModels)
             setConversationModels(conversationModels);
             
             isRefreshing.current = false;
@@ -39,7 +39,7 @@ export function DialogList({refreshDialogs}: { refreshDialogs: () => void }): Re
                     conversationModels.map((dialog) => (
                         <div key={dialog.Id}>
                             <br/>
-                            <Link to={`/conversations/${dialog.Id}`}>{dialog.Name}</Link>
+                            <ConversationItem conversation={dialog}/>
                         </div>
                     ))
                 }

@@ -24,7 +24,6 @@ export class SessionConversationDataProvider implements IConversationDataProvide
     }
 
     public async Update(id: string): Promise<ConversationModel> {
-
         this._conversations = this._conversations.filter(x => x.Id !== id);
 
         return this.Get(id);
