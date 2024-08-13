@@ -2,7 +2,7 @@ import {ReactElement} from "react";
 import {Outlet} from "react-router-dom";
 import {DialogList} from "../ManualPages/ConversationsPage/LeftPanel/DialogList/DialogList";
 import {CreateDialogButton} from "../ManualPages/ConversationsPage/LeftPanel/CreateDialogButton/CreateDialogButton";
-import {PersonaPanel} from "../ManualPages/ConversationsPage/ControlPanel/PersonaPanel";
+import {PersonaPanel} from "../ManualPages/ConversationsPage/LeftPanel/PersonaSelectionPanel/PersonaPanel";
 
 export function ConversationsLayout({ refreshDialogs }: { refreshDialogs: () => void }): ReactElement {
     return (

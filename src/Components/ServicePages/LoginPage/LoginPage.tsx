@@ -5,6 +5,7 @@ import {CreateApiClient} from "../../../api/AxiosClient";
 import {UserService} from "../../../Models/Users/Services/UserService";
 import {userDataProvider} from "../../../Models/Users/UserData/Providers/UserDataProvider";
 import {authorizationService} from "../../../Models/Users/Services/AuthorizationServiceProvider";
+import {conversationDataProvider} from "../../../Models/Dialogs/ConversationData/Providers/ConversationDataProvider";
 
 export function LoginPage(): ReactElement {
     
@@ -47,6 +48,8 @@ async function HandleLogin(username: string, password: string, setStatus: any) {
         const response = await userService.LoginUser(username, password)
         
         userDataProvider.UserData = response;
+        conversationDataProvider.Init();
+        await conversationDataProvider.LoadAll();
     } catch {
         setStatus('Unauthorized');
     }

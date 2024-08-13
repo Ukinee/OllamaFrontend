@@ -5,6 +5,7 @@ import {UserService} from "../../../Models/Users/Services/UserService";
 import {userDataProvider} from "../../../Models/Users/UserData/Providers/UserDataProvider";
 import {Link, useNavigate} from "react-router-dom";
 import {authorizationService} from "../../../Models/Users/Services/AuthorizationServiceProvider";
+import {conversationDataProvider} from "../../../Models/Dialogs/ConversationData/Providers/ConversationDataProvider";
 
 export function RegisterPage(): ReactElement {
 
@@ -45,7 +46,9 @@ async function HandleRegister(username: string, password: string, setStatus: any
 
     try {
         const data = await userService.RegisterUser(username, password);
-        userDataProvider.UserData = data;
+        userDataProvider.UserData = data;        
+        conversationDataProvider.Init();
+        await conversationDataProvider.LoadAll();
     } catch (ex) {
         setStatus('Unauthorized');
     }

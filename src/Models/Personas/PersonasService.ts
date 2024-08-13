@@ -6,6 +6,7 @@ import {PersonasResponse} from "./Models/PersonasResponse";
 import {PostPersonaRequest} from "./Models/PostPersonaRequest";
 import {PersonaResponse} from "./Models/PersonaResponse";
 import {PutPersonaRequest} from "./Models/PutPersonaRequest";
+import {UUID} from "node:crypto";
 
 export class PersonasService {
     private _endpointService: AuthorisedEndpointService;
@@ -16,20 +17,40 @@ export class PersonasService {
         this._endpointService = new AuthorisedEndpointService(apiClient);
     }
 
-    public async GetPersonas(): Promise<PersonaResponse[]> {
-        const response = await this._endpointService.GetPersonas();
+    public async GetUserPersonas(): Promise<PersonaResponse[]> {
+        const response = await this._endpointService.GetUserPersonas();
+
+        return response.personas;
+    }
+
+    public async GetConversationPersonas(conversationId: string): Promise<PersonaResponse[]> {
+        const response = await this._endpointService.GetConversationPersonas(conversationId);
 
         return response.personas;
     }
 
     public async PostPersona(name: string): Promise<PersonaResponse> {
-        
+
         const userId = userDataProvider.UserData.Id;
         const payload: PostPersonaRequest = new PostPersonaRequest(name, userId);
 
         const response = await this._endpointService.PostPersona(payload);
 
         return response;
+    }
+
+    public async GetPersonasByUserName(name: string): Promise<PersonaResponse[]> {
+        const response = await this._endpointService.GetPersonasByUserName(name);
+
+        return response.personas;
+    }
+
+    public async AddPersonaToConversation(conversationId: string, personaId: string): Promise<void> {
+        await this._endpointService.AddPersonaToConversation(conversationId, personaId);
+    }
+
+    public async RemovePersonaFromConversation(conversationId: string, personaId: string) {
+        await this._endpointService.RemovePersonaFromConversation(conversationId, personaId);
     }
 
     public async PutPersona(id: string, name: string, role: string, description: string): Promise<PersonaResponse> {

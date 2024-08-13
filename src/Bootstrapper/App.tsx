@@ -36,21 +36,24 @@ export function App(): ReactElement {
             let userService = new UserService();
 
             console.log("Checking user data...");
-            
+
             if (userDataProvider.HasUserData() == false) {
                 console.log("No data")
                 navigate("/auth/login");
+                setIsLoading(false);
                 return;
             }
 
             console.log("Checking login...");
-            
+
             if (await userService.CheckLogin(userDataProvider.UserData) == false) {
                 console.log("No login")
                 navigate("/auth/login");
+                setIsLoading(false);
                 return;
             }
-            
+
+
             conversationDataProvider.Init();
             await conversationDataProvider.LoadAll();
             refreshDialogs();
@@ -61,11 +64,10 @@ export function App(): ReactElement {
 
     const refreshDialogs = () => setUpdate(update === false);
 
-    if (isLoading)
-    {
+    if (isLoading) {
         return <LoadingPage/>
     }
-    
+
     return (
         <Routes>
             <Route path="/" element={<Layout/>}>

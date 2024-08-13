@@ -1,8 +1,8 @@
 import {ReactElement, useEffect, useState} from "react";
-import {DropdownMenu} from "../../../Common/DropdownMenu/DropdownMenu";
-import {userDataProvider} from "../../../../Models/Users/UserData/Providers/UserDataProvider";
-import {PersonasService} from "../../../../Models/Personas/PersonasService";
-import {PersonaResponse} from "../../../../Models/Personas/Models/PersonaResponse";
+import {DropdownMenu} from "../../../../Common/DropdownMenu/DropdownMenu";
+import {userDataProvider} from "../../../../../Models/Users/UserData/Providers/UserDataProvider";
+import {PersonasService} from "../../../../../Models/Personas/PersonasService";
+import {PersonaResponse} from "../../../../../Models/Personas/Models/PersonaResponse";
 
 
 export function PersonaPanel({refreshDialogs}: { refreshDialogs: () => void }): ReactElement {
@@ -13,9 +13,11 @@ export function PersonaPanel({refreshDialogs}: { refreshDialogs: () => void }): 
     const [personas, setPersonas] = useState<PersonaResponse[]>([])
 
     useEffect(() => {
+        GetPersonas();
+        
         async function GetPersonas() {
             const service = new PersonasService();
-            const response = await service.GetPersonas();
+            const response = await service.GetUserPersonas();
 
             let personaId = userDataProvider.UserData.CurrentPersonaId;
             let initialPersona = response.find(x => x.id == personaId);
@@ -29,8 +31,6 @@ export function PersonaPanel({refreshDialogs}: { refreshDialogs: () => void }): 
 
             setIsInitialized(true);
         }
-
-        GetPersonas();
     }, []);
 
     if (isInitialized == false) {

@@ -6,21 +6,35 @@ export class SessionConversationDataProvider implements IConversationDataProvide
 
     private conversationService: ConversationService | null = null;
     private _conversations: ConversationModel[] = [];
+    private _loadingConversations: Map<string, Promise<ConversationModel>> = new Map();
 
     public Init(): void {
         this.conversationService = new ConversationService();
     }
 
-    public async Get(id: string): Promise<ConversationModel> {
-        return this.GetPage(id, 1);
+    public async GetPage(id: string, page: number): Promise<ConversationModel> {
+        let conversation = this._conversations.find(x => x.Id === id);
+        
+        if (conversation === undefined) {
+            if (!this._loadingConversations.has(id)) {
+                const loadingPromise = this.conversationService!.GetConcreteConversation(id, page)
+                    .then(conv => {
+                        this._conversations.push(conv);
+                        this._loadingConversations.delete(id);
+                        return conv;
+                    });
+                
+                this._loadingConversations.set(id, loadingPromise);
+            }
+            
+            conversation = await this._loadingConversations.get(id);
+        }
+        
+        return conversation!;
     }
 
-    public async GetPage(id: string, page: number): Promise<ConversationModel> {
-        if (this._conversations.find(x => x.Id === id) === undefined) {
-            const conversation = await this.conversationService!.GetConcreteConversation(id, page);
-            this._conversations.push(conversation);
-        }
-        return this._conversations.find(x => x.Id === id)!;
+    public async Get(id: string): Promise<ConversationModel> {
+        return this.GetPage(id, 1);
     }
 
     public async Update(id: string): Promise<ConversationModel> {
@@ -30,7 +44,6 @@ export class SessionConversationDataProvider implements IConversationDataProvide
     }
 
     public async GetByPersonaId(id: string): Promise<ConversationModel[]> {
-
         let result = this._conversations.filter(x =>
             x.PersonasIds.some(y => y === id));
 

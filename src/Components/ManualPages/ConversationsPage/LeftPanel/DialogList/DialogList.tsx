@@ -1,5 +1,4 @@
 import {ReactElement, useEffect, useRef, useState} from "react";
-import {Link} from "react-router-dom";
 import ConversationModel from "../../../../../Models/Dialogs/Models/ConversationModel";
 import {
     conversationDataProvider
@@ -10,26 +9,25 @@ import {ConversationItem} from "../../../../../Models/Dialogs/Components/Convers
 
 export function DialogList({refreshDialogs}: { refreshDialogs: () => void }): ReactElement {
     const [conversationModels, setConversationModels] = useState<ConversationModel[]>([])
-
-    const isRefreshing = useRef(false);
+    // const isRefreshing = useRef(false);
     
     useEffect(() => {
         RefreshDialogs();
 
         async function RefreshDialogs() {
-            if (isRefreshing.current) {
-                return;
-            }
-
-            isRefreshing.current = true;
+            // if (isRefreshing.current) {
+            //     return;
+            // }
+            //
+            // isRefreshing.current = true;
             
             let currentPersonaId: UUID = userDataProvider.UserData.CurrentPersonaId;
             let conversationModels = await conversationDataProvider.GetByPersonaId(currentPersonaId);
             setConversationModels(conversationModels);
             
-            isRefreshing.current = false;
+            // isRefreshing.current = false;
         }
-    }, [refreshDialogs]);
+    }, [refreshDialogs, userDataProvider.UserData]);
 
     return (
         <div>
